@@ -25,6 +25,60 @@ def quantum_multiplication():
 
     return qc
 
+from qiskit import QuantumCircuit, Aer, execute
+
+def quantum_multiplication_calc(a1, a0, b1, b0):
+    """
+    Perform quantum multiplication of two 2-bit binary numbers.
+
+    Args:
+        a1 (int): Most significant bit of the first binary number (A).
+        a0 (int): Least significant bit of the first binary number (A).
+        b1 (int): Most significant bit of the second binary number (B).
+        b0 (int): Least significant bit of the second binary number (B).
+
+    Returns:
+        dict: Resulting binary output as a dictionary of measurement counts.
+    """
+    # Create a quantum circuit with 6 qubits (4 for inputs, 2 for outputs) and 4 classical bits
+    qc = QuantumCircuit(6, 4)
+
+    # Set inputs on qubits
+    if a0 == 1:
+        qc.x(0)  # Set qubit q_0 to represent a0
+    if a1 == 1:
+        qc.x(1)  # Set qubit q_1 to represent a1
+    if b0 == 1:
+        qc.x(2)  # Set qubit q_2 to represent b0
+    if b1 == 1:
+        qc.x(3)  # Set qubit q_3 to represent b1
+
+    # Perform multiplication using ancilla qubits (q_4, q_5)
+    # Step 1: Multiply a0 * b0 -> store in q_5 (Least significant bit of result)
+    qc.ccx(0, 2, 5)
+
+    # Step 2: Multiply a0 * b1 -> intermediate and add to q_4
+    qc.ccx(0, 3, 4)
+
+    # Step 3: Multiply a1 * b0 -> intermediate and add to q_4
+    qc.ccx(1, 2, 4)
+
+    # Step 4: Multiply a1 * b1 -> add to q_4
+    qc.ccx(1, 3, 4)
+
+    # Measure the result qubits (q_4, q_5 store the output)
+    qc.measure([4, 5, 0, 1], [0, 1, 2, 3])  # Map q_4, q_5, and inputs to classical bits c[0]-c[3]
+
+    print(qc)
+
+    # Execute the circuit on a quantum simulator
+    simulator = Aer.get_backend('qasm_simulator')
+    result = execute(qc, simulator, shots=1).result()
+
+    # Return the measured output
+    return result.get_counts()
+
+
 
 # Half Adder Logic (Classical)
 def half_adder(a, b):
@@ -120,6 +174,10 @@ def test_quantum_full_adder():
             # Write the result to the file
             f.write(f"Results: {counts}\n\n")
 
+def quantum_mult_calc_run(a1, a0, b1, b0):
+    output = quantum_multiplication_calc(a1, a0, b1, b0)
+    print(f"Quantum multiplication result for A={a1}{a0}, B={b1}{b0}: {output}")
+
 # Run the test and save the circuit to the file
 test_quantum_full_adder()
 
@@ -128,5 +186,10 @@ qc_multiplication = quantum_multiplication()
 print("Quantum Multiplication Circuit:")
 print(qc_multiplication)
 print("Results:", run_quantum_multiplication(qc_multiplication))
+
+# Test the quantum multiplication function
+a1, a0 = 1, 0  # Binary 3
+b1, b0 = 1, 0  # Binary 2
+quantum_mult_calc_run(a1,a0,b1,b0)
 
 
