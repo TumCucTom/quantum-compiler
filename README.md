@@ -22,7 +22,7 @@ This project aims to build a basic quantum compiler that translates classical al
 
 2. Set up the environment:
    ```bash
-   pip install qiskit
+   pip install qiskit qiskit-aer
    ```
 
 ---
