@@ -123,7 +123,7 @@ Generated Circuit:
 ---
 
 ## Contributing
-Contributions are welcome! Feel free to submit issues or pull requests to enhance the functionality or [email me](hf23482@bristol.ac.uk) at hf23482@bristol.ac.uk.
+Contributions are welcome! Feel free to submit issues or pull requests to enhance the functionality or email me at hf23482@bristol.ac.uk.
 
 ---
 
