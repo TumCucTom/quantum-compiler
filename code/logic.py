@@ -1,4 +1,6 @@
-from qiskit import QuantumCircuit, Aer, execute
+from qiskit import QuantumCircuit, transpile
+from qiskit.providers.aer import AerSimulator
+
 
 def logical_and():
     """
@@ -51,10 +53,13 @@ def logical_not():
     qc.measure(0, 0)
     return qc
 
-# Test the functions
+# Function to simulate a circuit
 def run_circuit(qc):
-    simulator = Aer.get_backend('qasm_simulator')
-    result = execute(qc, simulator, shots=1).result()
+    simulator = AerSimulator()
+    # Transpile the circuit for the AerSimulator
+    compiled_circuit = transpile(qc, simulator)
+    # Run the simulation
+    result = simulator.run(compiled_circuit, shots=1).result()
     counts = result.get_counts()
     return counts
 
